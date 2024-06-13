@@ -149,6 +149,7 @@ def main(session, details):
 
     # smart starting question and keyword answers
     # priming
+    yield session.call("rom.optional.behavior.play", name="BlocklyWaveRightArm")
     question = "Hi, today I will learn you about different music genres, or types! Are you ready?"
     answers = {"Yes": ["yes", "jes", "yus", "ja"], "No": ["no", "nee", "nay"]}
 
@@ -159,16 +160,19 @@ def main(session, details):
     total_answers = total_number_of_genres
     correct_answers = 0
     if answer == "Yes":
+        # custom cheering motion using the standard behaviors
+        yield session.call("rom.optional.behavior.play", name="BlocklyWaveRightArm")
+        yield session.call("rom.optional.behavior.play", name="BlocklyTouchShoulders")
         # Message preceding the note showcase
-        showcase_genres(session)  # showcases the different genres of music, playing a small sample and giving some additional information
+        yield showcase_genres(session)  # showcases the different genres of music, playing a small sample and giving some additional information
         yield session.call("rie.dialogue.say",
                            text="Okay, now I will play some samples of one of the  music genres I just described to you!" +
                            "Now it's your job to hold up the card with the right genre of music on it, for every correct guess you get a point")
-        correct_answers += main_loop(session)  # enters main game loop
+        correct_answers += yield main_loop(session)  # enters main game loop
 
         # function that will have the robot react with joy or shrug depending on the students score,
         # currently the function is set to react with if the student got more than 55% correct
-        react_to_score(session, correct_answers, total_answers)
+        yield react_to_score(session, correct_answers, total_answers)
 
         # Give the option to the user to play again:
         question = "You scored: " + str(correct_answers) + ", would you like to play again?"
@@ -181,15 +185,15 @@ def main(session, details):
             total_answers += total_number_of_genres
             yield session.call("rie.dialogue.say",
                            text="Okay, here we go again!")
-            main_loop(session)  # run the main loop another 5 times
+            yield main_loop(session)  # run the main loop another 5 times
         elif answer == "No":
             yield session.call("rie.dialogue.say",
                            text="Oh, well maybe some other time.")
         else:
             yield session.call("rie.dialogue.say",
                            text="Sorry, but I didn't hear you properly.")
-
     elif answer == "No":
+        yield sad(session)  # sad reaction to not willing to participate
         yield session.call("rie.dialogue.say",
                            text="Oh, well maybe some other time.")
     else:
@@ -223,7 +227,7 @@ def main_loop(session):
         # generating random integer which will select one of the urls
         random_url = random.randint(0, len(urls))
         # Playing of random note(session, selected url, sleep_time associated w selected url)
-        play_music(session, urls[random_url][0], [random_url][1])
+        yield play_music(session, urls[random_url][0], [random_url][1])
 
         aruco_bool = True
         while aruco_bool:
@@ -238,9 +242,13 @@ def main_loop(session):
         if marker_mapping[last_seen_marker_id] == urls[random_url][2]:
             correct_answers += 1    # add one point to correct answers
             text = f"good job! That is correct! It was indeed " + marker_mapping[random_url]
+            # do a dab anytime the student gets a genre right
+            yield session.call("rom.optional.behavior.play", name="BlocklyDab")
             yield session.call("rie.dialogue.say", text)
         else:
             text = "Better luck next time, this was " + urls[random_url][2]
+            # shrug when the student gets it wrong, there is always another time/try!
+            yield session.call("rom.optional.behavior.play", name="BlocklyShrug")
             yield session.call("rie.dialogue.say", text)
         
 
@@ -273,10 +281,10 @@ def react_to_score(session, correct_answers: int, total_answers: int):
 def showcase_genres(session):
     """ A small function that iterates through the different genres of music,
         The notes are then played by the robot one by one."""
-    classical_music(session)
-    opera_music(session)
-    jazz_music(session)
-    rock_music(session)
+    yield classical_music(session)
+    yield opera_music(session)
+    yield jazz_music(session)
+    yield rock_music(session)
 
     
 @inlineCallbacks
@@ -305,10 +313,14 @@ def classical_music(session):
                         text="Classical music is played on string-instruments like the: violin, bass and cello. Though many more instruments are often brought to the party!")
     yield session.call("rie.dialogue.say",
                         text="When a group of people get together to play classical music, they call themselfs: an orchestra. Here is how that sounds like") 
+    # put arm forward as if the robot is holding a violin or trying to point to something
+    yield session.call("rom.optional.behavior.play", name="BlocklyRightArmForward")
+    # turn right as if showing you something or like it's making the striking(strijken?) motion as if the robot had a string instrument
+    yield session.call("rom.optional.behavior.play", name="BlocklyTurnRight")
     # plays a sample of classical music
     url = "https://audio.jukehost.co.uk/5uiytuvreqb69AWlncw9eFy7jVWuCsWt"  # url pointing to file with short classical music sample
     sleep_time = 13
-    play_music(session, url, sleep_time)
+    yield play_music(session, url, sleep_time)
     
 
 @inlineCallbacks
@@ -321,9 +333,12 @@ def opera_music(session):
                            text="Opera is a form of music where they focus on the singers and their vocals, each singer portrays a character in a story." + 
                                 "The story is played out on the stage with the several actors. It sounds a little bit like this:") 
 
+    # the optional pre-programmed behaviors are here supposed to show the robot raise an arm forward like a opera singer ended by a bow.
+    yield session.call("rom.optional.behavior.play", name="BlocklyLeftArmForward")
     url = "https://audio.jukehost.co.uk/iF9E7Yfu5Cmm8b2Bso8i9NGQ920YkVFK"  # url pointing to file with short opera music sample
     sleep_time = 10
-    play_music(session, url, sleep_time)
+    yield play_music(session, url, sleep_time)
+    yield session.call("rom.optional.behavior.play", name="BlocklyBow")
 
 
 @inlineCallbacks
@@ -340,9 +355,12 @@ def jazz_music(session):
                            text="Jazz is a form of music where improvisation is key! The musicians agree beforehand on some base tunes" + 
                                 "but while playing they will start to improvise, like this:") 
     
+    # put both arms forward as if holding a trumpet (or other brass instrument) and touch toes as if vibing with the music
+    yield session.call("rom.optional.behavior.play", name="BlocklyArmsForward")
+    yield session.call("rom.optional.behavior.play", name="BlocklyTouchToes")
     url = "https://https://audio.jukehost.co.uk/OgAmcWnZQbxZUbWcumTVYhzwiuCjS1AUaudio.jukehost.co.uk/as5c8k0gibu7iN9aavbOsoU4ZgpCG3pz"  # url pointing to file with short jazz music sample
     sleep_time = 25
-    play_music(session, url, sleep_time)
+    yield play_music(session, url, sleep_time)
 
 
 @inlineCallbacks
@@ -355,11 +373,11 @@ def rock_music(session):
                            text="Perhaps you ever heard the screeching sounds of an electric guitar," + 
                                 "banging of the drums and the heavy sound of a bass. That is the sound of rock music" +
                                 "often characterized by the electric instruments. Here, listen to this:") 
-    
-    
+    # Put up arms as if at a rock concert
+    yield session.call("rom.optional.behavior.play", name="BlocklyArmsUp")
     url = "https://audio.jukehost.co.uk/Xpe17EsiHQOiQUknc2TvRpZjxdZ7Lgeh"  # url pointing to file with short rock music sample
     sleep_time = 18
-    play_music(session, url, sleep_time)
+    yield play_music(session, url, sleep_time)
     
 
 
@@ -369,7 +387,7 @@ wamp = Component(
         "serializers": ["msgpack"],
         "max_retries": 0
     }],
-    realm="rie.666a203c961f249628fc242a",
+    realm="rie.666ab353961f249628fc272e",
 )
 
 wamp.on_join(main)
