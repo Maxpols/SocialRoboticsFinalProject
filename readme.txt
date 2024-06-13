@@ -13,6 +13,8 @@ This guide will help you run the `assignment2.py` Python script with an AlphaMin
 
 ## Steps to Run the Program
 
+(0. If not yet done, find the real of a alphamini robot via https://portal.robotsindeklas.nl/portal.jsp and enter it at the bottom of the file at "realm=rie.xxxxx...")
+
 1. Open a terminal or command prompt.
 
 2. Navigate to the directory containing the `project-code-group11.py` file. You can do this with the `cd` command. For example:
@@ -34,7 +36,7 @@ The program should now run, and you will see output in your terminal or command 
 The program is designed to interact with an AlphaMini robot. Here you may list the different behavior that relies on the various sensors that produce certain behavior
 
 - **Touch**: The robot responds by doing x when touched on the fore/middle/back part of his head-sensor
-- **Aruco cards**: The robot responds to seeing an Aruco card. These are used to provide multiple-choice answers to a question asked by the robot.
-- **Faces**: The robot responds to seeing faces. The robot only starts telling a story after it sees a listener's face.
+- **Aruco cards**: The robot responds to seeing an Aruco card. These are used to provide multiple-choice answers to a question asked by the robot. Custom aruco cards can be found as .pdf file.
+- **Speech/Microphone**: The robot has a microphone which can register speech, though it's far from perfect and you may need to repeat yourself several times before it correctly registers.
 
 Please note that you will need the appropriate hardware (an AlphaMini robot with the necessary sensors) to fully interact with this program.
