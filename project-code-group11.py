@@ -6,15 +6,6 @@ import os.path
 import numpy as np
 import random
 
-# TODO:
-# - find more samples of the music genres
-# - write rest of code for the introduction of the other genres of music
-#       ~ opera
-#       ~ jazz
-# - update the urls within the main loop
-# - Make custom Aruco cards
-# - update the total number of genres global var to number of implemented genres
-
 last_seen_marker_id = -1
 total_number_of_genres = 4
 
