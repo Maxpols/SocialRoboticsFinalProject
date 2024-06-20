@@ -152,6 +152,8 @@ def main(session, details):
     yield session.call("rom.optional.behavior.play", name="BlocklyWaveRightArm")
     question = "Hi, today I will learn you about different music genres, or types! Are you ready?"
     answers = {"Yes": ["yes", "jes", "yus", "ja"], "No": ["no", "nee", "nay"]}
+    yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
 
     answer = yield session.call("rie.dialogue.ask",
                                 question=question,
@@ -163,6 +165,8 @@ def main(session, details):
         # custom cheering motion using the standard behaviors
         yield session.call("rom.optional.behavior.play", name="BlocklyWaveRightArm")
         yield session.call("rom.optional.behavior.play", name="BlocklyTouchShoulders")
+        yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
         # Message preceding the note showcase
         yield showcase_genres(session)  # showcases the different genres of music, playing a small sample and giving some additional information
         yield session.call("rie.dialogue.say",
@@ -245,11 +249,14 @@ def main_loop(session):
             # do a dab anytime the student gets a genre right
             yield session.call("rom.optional.behavior.play", name="BlocklyDab")
             yield session.call("rie.dialogue.say", text)
+            yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
         else:
             text = "Better luck next time, this was " + urls[random_url][2]
             # shrug when the student gets it wrong, there is always another time/try!
             yield session.call("rom.optional.behavior.play", name="BlocklyShrug")
             yield session.call("rie.dialogue.say", text)
+            yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
         
 
         # remove the url from the rotation.
@@ -273,8 +280,11 @@ def react_to_score(session, correct_answers: int, total_answers: int):
 
     if correct_percent > 0.55:
         yield happy(session)
+        yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance\
     else:
         yield session.call("rom.optional.behavior.play", name="BlocklyShrug")
+        yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
 
 
 @inlineCallbacks
@@ -321,6 +331,8 @@ def classical_music(session):
     url = "https://audio.jukehost.co.uk/5uiytuvreqb69AWlncw9eFy7jVWuCsWt"  # url pointing to file with short classical music sample
     sleep_time = 13
     yield play_music(session, url, sleep_time)
+    yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
     
 
 @inlineCallbacks
@@ -339,6 +351,8 @@ def opera_music(session):
     sleep_time = 10
     yield play_music(session, url, sleep_time)
     yield session.call("rom.optional.behavior.play", name="BlocklyBow")
+    yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
 
 
 @inlineCallbacks
@@ -361,6 +375,8 @@ def jazz_music(session):
     url = "https://https://audio.jukehost.co.uk/OgAmcWnZQbxZUbWcumTVYhzwiuCjS1AUaudio.jukehost.co.uk/as5c8k0gibu7iN9aavbOsoU4ZgpCG3pz"  # url pointing to file with short jazz music sample
     sleep_time = 25
     yield play_music(session, url, sleep_time)
+    yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
 
 
 @inlineCallbacks
@@ -378,6 +394,8 @@ def rock_music(session):
     url = "https://audio.jukehost.co.uk/Xpe17EsiHQOiQUknc2TvRpZjxdZ7Lgeh"  # url pointing to file with short rock music sample
     sleep_time = 18
     yield play_music(session, url, sleep_time)
+    yield session.call("rom.optional.behavior.play", name="BlocklyStand")  # Reset to normal stance
+
     
 
 
