@@ -61,7 +61,7 @@ def game_intro(session):
     yield session.call("rom.sensor.hearing.info")
     yield session.call("rie.dialogue.config.language", lang="en")
 
-    print("Robot is looking for a face, if the robot appears to freeze, check the code and uncomment the line that makes the robot look at the user first. (Line 49)")
+    print("Robot is looking for a face, if the robot appears to freeze, check the code and uncomment the line that makes the robot look at the user first. (Line 66)")
     yield session.call("rie.dialogue.say", text=f"What a beautiful day to learn some guitar notes. Let me look at you first.")
     yield session.call("rie.vision.face.find") # Makes the robot look at the user first, please uncomment if the program appears to freeze, this functionality does not work as well on all robots.
     yield session.call("rom.optional.behavior.play", name="BlocklyWaveRightArm")
